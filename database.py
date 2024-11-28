@@ -1,51 +1,72 @@
 import sqlite3
 
-DATABASE_NAME = "database.db"
-
 def create_tables():
-    conn = sqlite3.connect(DATABASE_NAME)
+    """
+    Crea las tablas necesarias en la base de datos.
+    """
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
+    
+    # Crear tabla de recursos
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS recursos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         categoria TEXT NOT NULL,
-        descripcion TEXT,
-        enlace TEXT
+        descripcion TEXT NOT NULL,
+        enlace TEXT NOT NULL
     )
     """)
+
+    # Crear tabla para registrar interacciones
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS consultas (
+    CREATE TABLE IF NOT EXISTS interacciones (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        tipo TEXT NOT NULL,
+        endpoint TEXT NOT NULL,
         consulta TEXT NOT NULL,
-        respuesta TEXT
+        respuesta TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
+    
     conn.commit()
     conn.close()
 
-def insert_recurso(categoria, descripcion, enlace):
-    conn = sqlite3.connect(DATABASE_NAME)
+
+def guardar_interaccion(endpoint, consulta, respuesta):
+    """
+    Guarda una interacción en la base de datos.
+    """
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    
     cursor.execute("""
-    SELECT * FROM recursos WHERE descripcion = ? AND enlace = ?
-    """, (descripcion, enlace))
-    resultado = cursor.fetchone()
-    
-    if resultado is None:
-        # Si no existe, insertar el recurso
-        cursor.execute("""
-        INSERT INTO recursos (categoria, descripcion, enlace)
-        VALUES (?, ?, ?)
-        """, (categoria, descripcion, enlace))
-        conn.commit()
+    INSERT INTO interacciones (endpoint, consulta, respuesta)
+    VALUES (?, ?, ?)
+    """, (endpoint, consulta, respuesta))
+    conn.commit()
     conn.close()
 
+
 def get_recursos():
-    conn = sqlite3.connect(DATABASE_NAME)
+    """
+    Devuelve una lista de recursos almacenados en la base de datos.
+    """
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM recursos")
-    recursos = cursor.fetchall()
+    cursor.execute("SELECT categoria, descripcion, enlace FROM recursos")
+    recursos = [{"categoria": row[0], "descripcion": row[1], "enlace": row[2]} for row in cursor.fetchall()]
     conn.close()
     return recursos
+
+
+def insert_recurso(categoria, descripcion, enlace):
+    """
+    Inserta un recurso en la tabla de recursos.
+    """
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+    INSERT INTO recursos (categoria, descripcion, enlace)
+    VALUES (?, ?, ?)
+    """, (categoria, descripcion, enlace))
+    conn.commit()
+    conn.close()

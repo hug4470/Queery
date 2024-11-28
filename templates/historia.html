@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center">Historia LGTBI</h1>
+<p class="text-center">Explora eventos históricos importantes y realiza consultas específicas.</p>
+
+<h3>Artículos destacados</h3>
+<ul>
+    {% for articulo in articulos %}
+    <li><a href="/historia?opcion={{ articulo.titulo }}">{{ articulo.titulo }}</a> - {{ articulo.descripcion }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Consulta personalizada</h3>
+<form method="get" action="/historia">
+    <div class="mb-3">
+        <label for="consulta" class="form-label">Escribe un evento o año</label>
+        <input type="text" class="form-control" id="consulta" name="consulta" placeholder="Ejemplo: 1969">
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+{% if respuesta %}
+<h3 class="mt-4">Resultado:</h3>
+<p>{{ respuesta }}</p>
+{% endif %}
+{% endblock %}

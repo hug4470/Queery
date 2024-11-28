@@ -1,10 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Query
+from database import create_tables, get_recursos, guardar_interaccion, insert_recurso
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from ai_model import (
     generar_respuesta_historia,
     generar_respuesta_recursos,
     generar_respuesta_formacion
 )
-from database import create_tables, get_recursos, insert_recurso
+
+
+# Configurar el directorio de templates
+templates = Jinja2Templates(directory="templates")
 
 # Crear las tablas al iniciar la aplicación
 create_tables()
@@ -16,51 +22,73 @@ insert_recurso("Educación", "Guía de lenguaje inclusivo", "https://ejemplo.com
 
 app = FastAPI()
 
-@app.get("/")
-async def read_root():
-    return {"message": "¡Hola, mundo!"}
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    """
+    Página de inicio.
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/recursos")
-def listar_recursos(pregunta: str = None):
-    """
-    Endpoint para listar recursos o responder preguntas relacionadas con ellos.
-    """
-    if pregunta:
-        # Generar respuesta específica para recursos
-        respuesta = generar_respuesta_recursos(pregunta)
-        return {"pregunta": pregunta, "respuesta": respuesta}
-    
-    # Si no hay pregunta, mostrar los recursos almacenados
-    recursos = get_recursos()
-    return {"recursos": recursos}
 
-@app.get("/historia")
-def historia(opcion: str = None, consulta: str = None):
+@app.get("/recursos", response_class=HTMLResponse)
+async def listar_recursos(request: Request, pregunta: str = Query(None)):
     """
-    Endpoint para consultar sobre historia LGTBI.
+    Página de Recursos LGTBI.
     """
+    try:
+        # Obtener recursos desde la base de datos
+        recursos = get_recursos()
+        
+        if pregunta:
+            # Generar respuesta para la pregunta
+            respuesta = generar_respuesta_recursos(pregunta)
+            
+            # Guardar interacción en la base de datos
+            guardar_interaccion("recursos", pregunta, respuesta)
+            
+            # Renderizar la plantilla con la respuesta generada
+            return templates.TemplateResponse("recursos.html", {
+                "request": request,
+                "recursos": recursos,
+                "respuesta": respuesta,
+                "pregunta": pregunta
+            })
+        
+        # Renderizar la plantilla sin consulta personalizada
+        return templates.TemplateResponse("recursos.html", {
+            "request": request,
+            "recursos": recursos
+        })
+
+    except Exception as e:
+        # Manejar errores inesperados
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
+
+
+@app.get("/historia", response_class=HTMLResponse)
+async def historia(request: Request, opcion: str = Query(None), consulta: str = Query(None)):
+    """
+    Página de Historia LGTBI.
+    """
+    # Datos de ejemplo para los artículos destacados
     articulos = [
         {"titulo": "Los disturbios de Stonewall", "descripcion": "El inicio del movimiento moderno LGTBI."},
         {"titulo": "El primer Orgullo LGTBI", "descripcion": "Celebrado en 1970, un año después de Stonewall."},
         {"titulo": "Ley de Matrimonio Igualitario en España", "descripcion": "Aprobada en 2005."},
     ]
-    
+
     if opcion:
-        try:
-            respuesta = generar_respuesta_historia(f"Explica más sobre: {opcion}")
-            return {"opcion": opcion, "respuesta": respuesta}
-        except Exception as e:
-            return {"error": "No se pudo generar una respuesta para la opción seleccionada.", "detalle": str(e)}
-    
+        # Lógica para manejar "opción"
+        respuesta = f"Explicación detallada sobre {opcion}."
+        return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos, "respuesta": respuesta, "opcion": opcion})
+
     if consulta:
-        try:
-            prompt = f"Habla sobre eventos LGTBI en el año {consulta}." if consulta.isdigit() else f"Consulta histórica sobre LGTBI: {consulta}"
-            respuesta = generar_respuesta_historia(prompt)
-            return {"consulta": consulta, "respuesta": respuesta}
-        except Exception as e:
-            return {"error": "No se pudo generar una respuesta para la consulta.", "detalle": str(e)}
-    
-    return {"articulos": articulos}
+        # Lógica para manejar "consulta" con el modelo
+        respuesta = generar_respuesta_historia(consulta)  # Usar el modelo para generar la respuesta
+        return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos, "respuesta": respuesta, "consulta": consulta})
+
+    # Si no hay ni opción ni consulta, renderizar la página principal de Historia
+    return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos})
 
 @app.get("/formacion")
 def formacion(tema: str):

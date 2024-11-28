@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center">Recursos LGTBI</h1>
+<p class="text-center">Explora asociaciones, protocolos y materiales educativos.</p>
+
+<h3>Recursos destacados</h3>
+<ul>
+    {% for recurso in recursos %}
+    <li>
+        <strong>{{ recurso.categoria }}:</strong>
+        <a href="{{ recurso.enlace }}" target="_blank">{{ recurso.descripcion }}</a>
+    </li>
+    {% else %}
+    <li>No se encontraron recursos destacados.</li>
+    {% endfor %}
+</ul>
+
+<h3>Consulta personalizada</h3>
+<form method="get" action="/recursos">
+    <div class="mb-3">
+        <label for="pregunta" class="form-label">Escribe tu consulta</label>
+        <input type="text" class="form-control" id="pregunta" name="pregunta" placeholder="Ejemplo: ¿Qué asociaciones hay en Madrid?">
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+{% if respuesta %}
+<h3 class="mt-4">Resultado:</h3>
+<p>{{ respuesta }}</p>
+{% endif %}
+{% endblock %}
