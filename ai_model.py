@@ -5,7 +5,7 @@ try:
     gemini_api_key = os.getenv("GEMINI_API_KEY")
     genai.configure(api_key=gemini_api_key)
 
-except:
+except Exception as e:
     print(f"Error: {e}")
     print("Por favor, asegúrate de proporcionar la clave de tu API de Gemini")
     exit()
