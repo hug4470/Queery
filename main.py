@@ -90,14 +90,39 @@ async def historia(request: Request, opcion: str = Query(None), consulta: str = 
     # Si no hay ni opción ni consulta, renderizar la página principal de Historia
     return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos})
 
-@app.get("/formacion")
-def formacion(tema: str):
+@app.get("/formacion", response_class=HTMLResponse)
+async def listar_formacion(request: Request, tema: str = Query(None)):
     """
-    Endpoint para ofrecer formación sobre temas LGTBI.
+    Página de Formación LGTBI.
     """
-    if not tema:
-        raise HTTPException(status_code=400, detail="El tema no puede estar vacío.")
-    
-    # Generar respuesta específica para formación
-    respuesta = generar_respuesta_formacion(tema)
-    return {"tema": tema, "respuesta": respuesta}
+    formaciones_destacadas = [
+        {"titulo": "Uso correcto de pronombres", "descripcion": "Aprende a respetar las identidades de género."},
+        {"titulo": "Lenguaje inclusivo", "descripcion": "Guía práctica para un lenguaje no discriminatorio."},
+        {"titulo": "Apoyo a personas trans", "descripcion": "Cómo ser un buen aliado del colectivo trans."},
+    ]
+
+    try:
+        if tema:
+            # Generar respuesta para el tema solicitado
+            respuesta = generar_respuesta_formacion(tema)
+            
+            # Guardar interacción en la base de datos
+            guardar_interaccion("formacion", tema, respuesta)
+            
+            # Renderizar la plantilla con la respuesta generada
+            return templates.TemplateResponse("formacion.html", {
+                "request": request,
+                "formaciones_destacadas": formaciones_destacadas,
+                "respuesta": respuesta,
+                "tema": tema
+            })
+
+        # Renderizar la plantilla sin consulta personalizada
+        return templates.TemplateResponse("formacion.html", {
+            "request": request,
+            "formaciones_destacadas": formaciones_destacadas
+        })
+
+    except Exception as e:
+        # Manejar errores inesperados
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
