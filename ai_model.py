@@ -1,14 +1,25 @@
 import google.generativeai as genai
+from dotenv import load_dotenv
 import os
 
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
+
 try:
+    # Obtener la clave de la API desde las variables de entorno
     gemini_api_key = os.getenv("GEMINI_API_KEY")
+    
+    # Verificar si la clave existe
+    if not gemini_api_key:
+        raise ValueError("La variable GEMINI_API_KEY no está definida. Verifica tu archivo .env o las variables de entorno.")
+    
+    # Configurar la API con la clave
     genai.configure(api_key=gemini_api_key)
+    print("API configurada correctamente con la clave proporcionada.")
 
 except Exception as e:
-    print(f"Error: {e}")
-    print("Por favor, asegúrate de proporcionar la clave de tu API de Gemini")
-    exit()
+    print(f"Error al configurar la API: {e}")
+    raise
 
 def generar_respuesta_historia(prompt):
     """

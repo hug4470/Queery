@@ -1,17 +1,13 @@
-# Usa una imagen base de Python
 FROM python:3.11-slim
 
-# Establece el directorio de trabajo
+# Crear el directorio de la aplicación
 WORKDIR /app
 
-# Copia los archivos necesarios al contenedor
-COPY . .
+# Copiar el código de la aplicación
+COPY . /app
 
-# Instala las dependencias
+# Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expone el puerto de la aplicación (por ejemplo, 8000 para FastAPI)
-EXPOSE 8000
-
-# Comando para ejecutar la aplicación
-CMD ["python", "main.py"]
+# Comando para ejecutar el servidor
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]

@@ -1,25 +1,25 @@
 from fastapi import FastAPI, HTTPException, Request, Query
-from database import create_tables, get_recursos, guardar_interaccion, insert_recurso
+from database import create_tables, get_recursos, guardar_interaccion
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ai_model import (
     generar_respuesta_historia,
     generar_respuesta_recursos,
-    generar_respuesta_formacion
+    generar_respuesta_formacion,
 )
-
 
 # Configurar el directorio de templates
 templates = Jinja2Templates(directory="templates")
 
 # Crear las tablas al iniciar la aplicación
-create_tables()
+try:
+    create_tables()
+    print("Tablas creadas/verificadas correctamente.")
+except Exception as e:
+    print(f"Error al crear/verificar tablas: {e}")
+    exit()
 
-# Insertar datos iniciales al inicio
-insert_recurso("Asociaciones", "Arcópoli: Asociación LGTB+ en Madrid", "https://arcopoli.org")
-insert_recurso("Protocolos", "Protocolo de actuación ante agresiones", "https://ejemplo.com/protocolo")
-insert_recurso("Educación", "Guía de lenguaje inclusivo", "https://ejemplo.com/guia")
-
+# Crear la aplicación FastAPI
 app = FastAPI()
 
 @app.get("/", response_class=HTMLResponse)
@@ -28,7 +28,6 @@ async def read_root(request: Request):
     Página de inicio.
     """
     return templates.TemplateResponse("index.html", {"request": request})
-
 
 @app.get("/recursos", response_class=HTMLResponse)
 async def listar_recursos(request: Request, pregunta: str = Query(None)):
@@ -51,19 +50,18 @@ async def listar_recursos(request: Request, pregunta: str = Query(None)):
                 "request": request,
                 "recursos": recursos,
                 "respuesta": respuesta,
-                "pregunta": pregunta
+                "pregunta": pregunta,
             })
         
         # Renderizar la plantilla sin consulta personalizada
         return templates.TemplateResponse("recursos.html", {
             "request": request,
-            "recursos": recursos
+            "recursos": recursos,
         })
 
     except Exception as e:
         # Manejar errores inesperados
         raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
-
 
 @app.get("/historia", response_class=HTMLResponse)
 async def historia(request: Request, opcion: str = Query(None), consulta: str = Query(None)):
@@ -77,18 +75,32 @@ async def historia(request: Request, opcion: str = Query(None), consulta: str = 
         {"titulo": "Ley de Matrimonio Igualitario en España", "descripcion": "Aprobada en 2005."},
     ]
 
-    if opcion:
-        # Lógica para manejar "opción"
-        respuesta = f"Explicación detallada sobre {opcion}."
-        return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos, "respuesta": respuesta, "opcion": opcion})
+    try:
+        if opcion:
+            # Lógica para manejar "opción"
+            respuesta = f"Explicación detallada sobre {opcion}."
+            return templates.TemplateResponse("historia.html", {
+                "request": request,
+                "articulos": articulos,
+                "respuesta": respuesta,
+                "opcion": opcion,
+            })
 
-    if consulta:
-        # Lógica para manejar "consulta" con el modelo
-        respuesta = generar_respuesta_historia(consulta)  # Usar el modelo para generar la respuesta
-        return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos, "respuesta": respuesta, "consulta": consulta})
+        if consulta:
+            # Lógica para manejar "consulta" con el modelo
+            respuesta = generar_respuesta_historia(consulta)
+            return templates.TemplateResponse("historia.html", {
+                "request": request,
+                "articulos": articulos,
+                "respuesta": respuesta,
+                "consulta": consulta,
+            })
 
-    # Si no hay ni opción ni consulta, renderizar la página principal de Historia
-    return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos})
+        # Renderizar la página principal de Historia
+        return templates.TemplateResponse("historia.html", {"request": request, "articulos": articulos})
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
 
 @app.get("/formacion", response_class=HTMLResponse)
 async def listar_formacion(request: Request, tema: str = Query(None)):
@@ -114,15 +126,14 @@ async def listar_formacion(request: Request, tema: str = Query(None)):
                 "request": request,
                 "formaciones_destacadas": formaciones_destacadas,
                 "respuesta": respuesta,
-                "tema": tema
+                "tema": tema,
             })
 
         # Renderizar la plantilla sin consulta personalizada
         return templates.TemplateResponse("formacion.html", {
             "request": request,
-            "formaciones_destacadas": formaciones_destacadas
+            "formaciones_destacadas": formaciones_destacadas,
         })
 
     except Exception as e:
-        # Manejar errores inesperados
         raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
