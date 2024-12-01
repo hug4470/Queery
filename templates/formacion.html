@@ -1,31 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-center">Formación sobre temas LGTBI</h1>
-<p class="text-center">Explora guías prácticas y realiza consultas específicas sobre formación.</p>
+    <h1 class="text-center shadow-text">Formación LGTBI</h1>
+    <p class="text-center shadow-text">Accede a recursos educativos y resuelve dudas específicas sobre temas LGTBIQ+.</p>
 
-<h3>Temas destacados</h3>
-<ul>
-    {% for formacion in formaciones_destacadas %}
-    <li>
-        <strong>{{ formacion.titulo }}:</strong> {{ formacion.descripcion }}
-    </li>
-    {% else %}
-    <li>No se encontraron temas destacados.</li>
-    {% endfor %}
-</ul>
+    <h3 class="shadow-text">Temas destacados</h3>
+    <ul>
+        {% for formacion in formaciones_destacadas %}
+            <li><a href="/formacion?tema={{ formacion.titulo }}" class="shadow-text">{{ formacion.titulo }}</a> - {{ formacion.descripcion }}</li>
+        {% endfor %}
+    </ul>
 
-<h3>Consulta personalizada</h3>
-<form method="get" action="/formacion">
-    <div class="mb-3">
-        <label for="tema" class="form-label">Escribe tu consulta</label>
-        <input type="text" class="form-control" id="tema" name="tema" placeholder="Ejemplo: ¿Cómo usar pronombres correctamente?">
-    </div>
-    <button type="submit" class="btn btn-primary">Buscar</button>
-</form>
+    <h3 class="shadow-text">Consulta personalizada</h3>
+    <form method="get" action="/formacion">
+        <div class="mb-3">
+            <label for="tema" class="form-label shadow-text">Escribe un tema o pregunta</label>
+            <input type="text" class="form-control shadow-text" id="tema" name="tema" placeholder="Ejemplo: ¿Qué es el pronombre neutro?">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm shadow-text">Enviar</button>
+    </form>
 
-{% if respuesta %}
-<h3 class="mt-4">Resultado:</h3>
-<p>{{ respuesta }}</p>
-{% endif %}
+    {% if respuesta %}
+        <h3 class="mt-4 shadow-text">Resultado:</h3>
+        <div id="chat-output">
+            <p>{{ respuesta }}</p>
+        </div>
+    {% endif %}
 {% endblock %}

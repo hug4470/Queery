@@ -1,27 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-center">Historia LGTBI</h1>
-<p class="text-center">Explora eventos históricos importantes y realiza consultas específicas.</p>
+<h1 class="text-center shadow-text">Historia LGTBI</h1>
+<p class="text-center shadow-text">Explora eventos históricos importantes y realiza consultas específicas.</p>
 
-<h3>Artículos destacados</h3>
+<h3 class="shadow-text">Artículos destacados</h3>
 <ul>
     {% for articulo in articulos %}
-    <li><a href="/historia?opcion={{ articulo.titulo }}">{{ articulo.titulo }}</a> - {{ articulo.descripcion }}</li>
+        <li>
+            <!-- Al hacer clic, el artículo se envía como consulta en la URL -->
+            <a href="/historia?consulta={{ articulo.titulo }}" class="shadow-text">{{ articulo.titulo }}</a> - {{ articulo.descripcion }}
+        </li>
     {% endfor %}
+    <!-- Nuevos artículos con la misma estructura -->
+    <li>
+        <a href="/historia?consulta=La+primera+manifestación+LGTBIQ%2B" class="shadow-text">La primera manifestación LGTBIQ+</a> - La primera manifestación del colectivo LGTBIQ+ en España en 1977.
+    </li>
+    <li>
+        <a href="/historia?consulta=El+activismo+LGTBIQ+en+España+en+los+90s" class="shadow-text">El activismo LGTBIQ+ en España en los 90s</a> - El despertar del activismo LGTBIQ+ en la década de los 90 en España.
+    </li>
 </ul>
 
-<h3>Consulta personalizada</h3>
+<h3 class="shadow-text">Consulta personalizada</h3>
 <form method="get" action="/historia">
     <div class="mb-3">
-        <label for="consulta" class="form-label">Escribe un evento o año</label>
-        <input type="text" class="form-control" id="consulta" name="consulta" placeholder="Ejemplo: 1969">
+        <label for="consulta" class="form-label shadow-text">Escribe un evento o año</label>
+        <input type="text" class="form-control shadow-text" id="consulta" name="consulta" placeholder="Ejemplo: 1969">
     </div>
-    <button type="submit" class="btn btn-primary">Buscar</button>
+    <button type="submit" class="btn btn-primary btn-sm shadow-text">Enviar</button>
 </form>
 
 {% if respuesta %}
-<h3 class="mt-4">Resultado:</h3>
-<p>{{ respuesta }}</p>
+    <h3 class="mt-4 shadow-text">Resultado:</h3>
+    <div id="chat-output">
+        <p>{{ respuesta }}</p>
+    </div>
 {% endif %}
 {% endblock %}

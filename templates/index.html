@@ -1,11 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-center">Bienvenido a Queery</h1>
-<p class="text-center">Explora la historia, recursos y formación del colectivo LGTBI.</p>
-<div class="d-flex justify-content-center">
-    <a href="/historia" class="btn btn-primary m-2">Historia</a>
-    <a href="/recursos" class="btn btn-success m-2">Recursos</a>
-    <a href="/formacion" class="btn btn-warning m-2">Formación</a>
-</div>
+    <!-- Título "Queery" en la parte superior izquierda -->
+    <h1 class="shadow-text">Queery</h1>
+
+    <!-- Descripción con fuente Neue Machina, justificada y pegada al margen izquierdo -->
+    <p class="description">
+        Bienvenide a nuestra plataforma, un espacio seguro y accesible para todes, tanto del colectivo LGTBIQ+ como de fuera.
+        Aquí encontrarás recursos, apoyo y un lugar donde compartir experiencias. Ya seas parte del colectivo o quieras aprender más, 
+        estamos aquí para ofrecerte información, orientación y un sentido de comunidad.
+        <br><br>
+        ¡Juntes somos más fuertes!
+    </p>
+
+    <!-- Texto centrado "¿Por dónde quieres empezar?" -->
+    <div class="center-text">¿Por donde quieres empezar?</div>
+
+    <!-- Sección de botones y descripciones debajo -->
+    <div class="buttons-section">
+        <!-- Botón Historia -->
+        <div class="button-item">
+            <form action="/historia" method="get">
+                <button type="submit" class="btn btn-primary btn-lg shadow-text">Historia</button>
+            </form>
+            <p class="button-description">Descubre la historia del colectivo LGTBIQ+ y los hitos más importantes en su lucha por los derechos.</p>
+        </div>
+        <!-- Botón Recursos -->
+        <div class="button-item">
+            <form action="/recursos" method="get">
+                <button type="submit" class="btn btn-success btn-lg shadow-text">Recursos</button>
+            </form>
+            <p class="button-description">Accede a recursos, guías y materiales útiles para aprender más sobre la comunidad y sus derechos.</p>
+        </div>
+        <!-- Botón Formación -->
+        <div class="button-item">
+            <form action="/formacion" method="get">
+                <button type="submit" class="btn btn-warning btn-lg shadow-text">Formación</button>
+            </form>
+            <p class="button-description">Explora programas de formación, talleres y actividades para sensibilizarte sobre los temas LGTBIQ+.</p>
+        </div>
+    </div>
 {% endblock %}

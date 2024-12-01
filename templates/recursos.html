@@ -1,32 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-center">Recursos LGTBI</h1>
-<p class="text-center">Explora asociaciones, protocolos y materiales educativos.</p>
+<h1 class="text-center shadow-text">Recursos LGTBI</h1>
+<p class="text-center shadow-text">Explora asociaciones, protocolos y materiales educativos.</p>
 
-<h3>Recursos destacados</h3>
+<h3 class="shadow-text">Recursos destacados</h3>
 <ul>
     {% for recurso in recursos %}
     <li>
-        <strong>{{ recurso.categoria }}:</strong>
-        <a href="{{ recurso.enlace }}" target="_blank">{{ recurso.descripcion }}</a>
+        <strong class="shadow-text">{{ recurso.categoria }}:</strong>
+        <a href="{{ recurso.enlace }}" target="_blank" class="shadow-text">{{ recurso.descripcion }}</a>
     </li>
     {% else %}
-    <li>No se encontraron recursos destacados.</li>
+    <li class="shadow-text">No se encontraron recursos destacados.</li>
     {% endfor %}
 </ul>
 
-<h3>Consulta personalizada</h3>
+<h3 class="shadow-text">Consulta personalizada</h3>
 <form method="get" action="/recursos">
     <div class="mb-3">
-        <label for="pregunta" class="form-label">Escribe tu consulta</label>
-        <input type="text" class="form-control" id="pregunta" name="pregunta" placeholder="Ejemplo: ¿Qué asociaciones hay en Madrid?">
+        <label for="pregunta" class="form-label shadow-text">Escribe tu consulta</label>
+        <input type="text" class="form-control shadow-text" id="pregunta" name="pregunta" placeholder="Ejemplo: ¿Qué asociaciones hay en Madrid?">
     </div>
-    <button type="submit" class="btn btn-primary">Buscar</button>
+    <button type="submit" class="btn btn-primary shadow-text">Buscar</button>
 </form>
 
 {% if respuesta %}
-<h3 class="mt-4">Resultado:</h3>
-<p>{{ respuesta }}</p>
+<h3 class="mt-4 shadow-text">Resultado:</h3>
+<!-- Caja de respuesta con fondo blanco y texto gris oscuro -->
+<div id="chat-output" class="shadow-text">
+    <p>{{ respuesta }}</p>
+</div>
 {% endif %}
 {% endblock %}
