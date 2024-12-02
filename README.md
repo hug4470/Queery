@@ -1,7 +1,3 @@
-¡Claro! Aquí te dejo el `README` con los detalles que mencionas:
-
----
-
 # Queer-y 🌈
 
 Queer-y es una aplicación diseñada para proporcionar formación e información relacionada con el colectivo LGTBIQ+, tanto para miembros del colectivo como para personas ajenas que deseen aprender más sobre temas de inclusión, historia, recursos y pedagogía. 🌟
