@@ -180,6 +180,3 @@ Feel free to open an issue if you encounter any problems or have suggestions.
 
 Queery is for everyone! 🏳️‍🌈💪
 
----
-
-¡Espero que te sirva!
