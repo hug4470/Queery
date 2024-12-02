@@ -11,7 +11,7 @@ try:
     
     # Verificar si la clave existe
     if not gemini_api_key:
-        raise ValueError("La variable GEMINI_API_KEY no está definida. Verifica tu archivo .env o las variables de entorno.")
+        raise ValueError("No utilices formato Markdown ni negrita, texto limpio. La variable GEMINI_API_KEY no está definida. Verifica tu archivo .env o las variables de entorno.")
     
     # Configurar la API con la clave
     genai.configure(api_key=gemini_api_key)
@@ -40,7 +40,7 @@ def generar_respuesta_recursos(prompt):
     """
     Genera respuestas personalizadas para el endpoint de Recursos.
     """
-    prompt_recursos = f"Sobre recursos LGTBI, responde de manera concisa: {prompt}"
+    prompt_recursos = f"No utilices formato Markdown ni negrita, texto limpio. Sobre recursos LGTBI, responde de manera concisa, aportando enlaces y referencias: {prompt}"
     try:
         # Generar respuesta utilizando el modelo de Google Generative AI
         model = genai.GenerativeModel("gemini-1.5-flash")
@@ -66,7 +66,7 @@ def generar_respuesta_formacion(prompt):
     """
     Genera respuestas personalizadas para el endpoint de Formación.
     """
-    prompt_formacion = f"Sobre formación en temas LGTBI, con una perspectiva pedagógica y accesible, como si fueses educador social LGTB+, explica u orienta: {prompt}"
+    prompt_formacion = f"No utilices formato Markdown ni negrita, texto limpio. Sobre formación en temas LGTBIq+, con una perspectiva pedagógica y accesible, explica u orienta: {prompt}"
     try:
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt_formacion)
