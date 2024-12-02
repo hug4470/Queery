@@ -36,6 +36,7 @@ docker login
 ```
 
 ### 3. Hacer pull de la imagen de DockerHub 📥
+https://hub.docker.com/r/hugommontes/queery
 Una vez dentro de Docker, realiza el pull de la imagen con el siguiente comando:
 
 ```bash
