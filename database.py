@@ -3,7 +3,6 @@ from sqlalchemy.sql import text
 from dotenv import load_dotenv
 import os
 
-# Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
 # print("DATABASE_USER:", os.getenv("DATABASE_USER"))
@@ -12,7 +11,6 @@ load_dotenv()
 # print("DATABASE_PORT:", os.getenv("DATABASE_PORT"))
 # print("DATABASE_NAME:", os.getenv("DATABASE_NAME"))
 
-# Intentar conectar con el esquema `information_schema` para manejar la creación de la base de datos
 try:
     DATABASE_URL = f"mysql+pymysql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASSWORD')}@" \
                    f"{os.getenv('DATABASE_HOST')}:{os.getenv('DATABASE_PORT')}/information_schema"
@@ -20,7 +18,6 @@ try:
     
     engine = create_engine(DATABASE_URL)
     
-    # Verificar si la base de datos existe; crearla si no
     with engine.connect() as conn:
         result = conn.execute(text("SHOW DATABASES;"))
         databases = [row[0] for row in result]
@@ -34,7 +31,6 @@ except Exception as e:
     print(f"Error al conectar o verificar la base de datos: {e}")
     exit()
 
-# Actualizar la conexión a la base de datos especificada
 try:
     DATABASE_URL = f"mysql+pymysql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASSWORD')}@" \
                    f"{os.getenv('DATABASE_HOST')}:{os.getenv('DATABASE_PORT')}/{os.getenv('DATABASE_NAME')}"
@@ -45,7 +41,6 @@ except Exception as e:
     print(f"Error al conectar con la base de datos especificada: {e}")
     exit()
 
-# Definir las tablas
 recursos = Table(
     "recursos",
     metadata,
@@ -66,7 +61,6 @@ interacciones = Table(
     Column("timestamp", TIMESTAMP, server_default=text("CURRENT_TIMESTAMP")),
 )
 
-# Crear las tablas en la base de datos si no existen
 def create_tables():
     """
     Crea las tablas necesarias en la base de datos.
@@ -77,7 +71,6 @@ def create_tables():
     except Exception as e:
         print(f"Error al crear las tablas: {e}")
 
-# Función para guardar una interacción
 def guardar_interaccion(endpoint, consulta, respuesta, metadata="{}"):
     """
     Guarda una interacción en la base de datos.
@@ -94,7 +87,6 @@ def guardar_interaccion(endpoint, consulta, respuesta, metadata="{}"):
     except Exception as e:
         print(f"Error al guardar la interacción: {e}")
 
-# Función para obtener las últimas interacciones
 def get_interacciones(limit=10):
     """
     Devuelve las últimas interacciones registradas en la base de datos.
@@ -117,7 +109,6 @@ def get_interacciones(limit=10):
         print(f"Error al obtener las interacciones: {e}")
         return []
 
-# Función para obtener recursos
 def get_recursos():
     """
     Devuelve una lista de recursos almacenados en la base de datos.
@@ -133,6 +124,5 @@ def get_recursos():
         print(f"Error al obtener recursos: {e}")
         return []
 
-# Crear tablas automáticamente al iniciar
 if __name__ == "__main__":
     create_tables()

@@ -3,7 +3,6 @@ import sqlite3
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
-# Inspeccionar la tabla recursos
 cursor.execute("PRAGMA table_info(recursos)")
 schema = cursor.fetchall()
 

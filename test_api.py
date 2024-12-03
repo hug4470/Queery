@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
 from main import app
 
-# Crear el cliente de pruebas
 client = TestClient(app)
 
 def test_root():

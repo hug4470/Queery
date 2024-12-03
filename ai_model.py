@@ -2,18 +2,14 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 
-# Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
 try:
-    # Obtener la clave de la API desde las variables de entorno
     gemini_api_key = os.getenv("GEMINI_API_KEY")
     
-    # Verificar si la clave existe
     if not gemini_api_key:
         raise ValueError("No utilices formato Markdown ni negrita, texto limpio. La variable GEMINI_API_KEY no está definida. Verifica tu archivo .env o las variables de entorno.")
     
-    # Configurar la API con la clave
     genai.configure(api_key=gemini_api_key)
     print("API configurada correctamente con la clave proporcionada.")
 
@@ -26,7 +22,6 @@ def generar_respuesta_historia(prompt):
     Genera respuestas personalizadas para el endpoint de Historia.
     """
     try:
-        # Construir el prompt para el modelo
         prompt_historia = f"En contexto histórico LGTBI, responde: {prompt}"
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt_historia)
@@ -42,24 +37,19 @@ def generar_respuesta_recursos(prompt):
     """
     prompt_recursos = f"No utilices formato Markdown ni negrita, texto limpio. Sobre recursos LGTBI, responde de manera concisa, aportando enlaces y referencias: {prompt}"
     try:
-        # Generar respuesta utilizando el modelo de Google Generative AI
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt_recursos)
         
-        # Validar la respuesta generada
         if not response or not hasattr(response, 'text'):
             raise ValueError("El modelo no devolvió una respuesta válida.")
         
         return response.text
 
     except ValueError as ve:
-        # Capturar errores de contenido generado
         return f"Error al procesar la respuesta: {str(ve)}"
     except genai.exceptions.GenerativeAiError as ge:
-        # Capturar errores específicos de la API de Gemini
         return f"Error de la API de Gemini: {str(ge)}"
     except Exception as e:
-        # Capturar cualquier otro error inesperado
         return f"Error inesperado al generar respuesta: {str(e)}"
     
 def generar_respuesta_formacion(prompt):
